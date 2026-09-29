@@ -1,0 +1,33 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "dist/main.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/",
+        "status": 308,
+        "headers": { "Location": "/doc" }
+      },
+      {
+        "src": "/(.*)",
+        "dest": "dist/main.js",
+        "methods": [
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH",
+          "OPTIONS",
+          "DELETE",
+          "HEAD",
+          "CONNECT",
+          "TRACE"
+        ]
+      }
+    ],
+    "buildCommand": "npm run build "
+  }
+  

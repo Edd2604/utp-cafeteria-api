@@ -1,0 +1,1 @@
+{"version":3,"file":"events.provider.js","sourceRoot":"","sources":["../../../src/modules/events/events.provider.ts"],"names":[],"mappings":";;;AAAA,4CAAmC;AAEnC,oCAAmC;AAEtB,QAAA,eAAe,GAAa;IACvC,OAAO,EAAE,UAAU;IACnB,UAAU,EAAE,GAAG,EAAE;QACf,OAAO,CAAC,eAAe,CACrB,8BAA8B,EAC9B,WAAI,CAAC,cAAc,EACnB,WAAI,CAAC,eAAe,CACrB,CAAA;QACD,OAAO,OAAO,CAAA;IAChB,CAAC;CACF,CAAA"}

@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Orden {
+  id              Int          @id @default(autoincrement())
+  creado          DateTime     @default(now())
+  hora_programada DateTime
+  transaccion     String       @default("NO HUBO TRANSACCION")
+  monto_total     Decimal      @db.Decimal(10, 2)
+  estado          Estado       @default(EN_PROCESO)
+  Metodo_Pago     MetodoPago   @default(YAPE)
+  Orden_Item      Orden_Item[]
+  Usuario         Usuario      @relation(fields: [usuario_id], references: [id])
+  usuario_id      Int
+}
+
+model Orden_Item {
+  id              Int      @id @default(autoincrement())
+  orden_id        Int
+  producto_id     Int
+  nombre_producto String
+  cantidad        Int
+  precio          Decimal  @db.Decimal(10, 2)
+  Producto        Producto @relation(fields: [producto_id], references: [id])
+  Orden           Orden    @relation(fields: [orden_id], references: [id], onDelete: Cascade)
+}
+
+model Producto {
+  id                Int                 @id @default(autoincrement())
+  creado            DateTime            @default(now())
+  actualizado       DateTime            @updatedAt
+  nombre            String              @db.VarChar(100)
+  descripcion       String              @db.VarChar(1000)
+  precio            Decimal             @db.Decimal(10, 2)
+  limite_de_orden   Int                 @default(0)
+  categoria         Categoria
+  url               String              @default("PENDIENTE")
+  habilitado        Boolean             @default(true)
+  archivado         Boolean             @default(false)
+  Orden_Item        Orden_Item[]
+  Inventario_Diario Inventario_Diario[]
+}
+
+model Inventario_Diario {
+  id             Int       @id @default(autoincrement())
+  producto       Producto  @relation(fields: [producto_id], references: [id])
+  producto_id    Int
+  fecha          DateTime
+  stock_inicial  Int       @default(0)
+  stock          Int       @default(0)
+  ultima_salida  DateTime?
+  ultima_entrada DateTime?
+
+  @@unique([producto_id, fecha])
+}
+
+model Usuario {
+  id               Int      @id @default(autoincrement())
+  creado           DateTime @default(now())
+  actualizado      DateTime @updatedAt
+  dni              String   @unique @db.VarChar(8)
+  nombre           String   @db.VarChar(100)
+  apellidos        String   @db.VarChar(100)
+  correo           String   @unique @db.VarChar(100)
+  contraseña      String
+  rol              Rol
+  habilitado       Boolean  @default(true)
+  archivado        Boolean  @default(false)
+  Orden            Orden[]
+  pushSubscription Json?
+}
+
+enum Rol {
+  ADMINISTRADOR
+  ESTUDIANTE
+  PROFESOR
+}
+
+enum Estado {
+  EN_PROCESO
+  RECOGER
+  COMPLETADA
+  ABANDONADA
+  CANCELADA
+}
+
+enum Categoria {
+  PREPARADOS
+  SALUDABLES
+  BEBIDAS
+  SNACKS
+  ALMUERZOS
+  OTROS
+}
+
+enum MetodoPago {
+  TARJETA
+  PLIN
+  YAPE
+}
